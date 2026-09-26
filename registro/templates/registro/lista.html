@@ -21,7 +21,7 @@
 
 
 
-  <table border="1" cellpadding="6">
+  <!-- <table border="1" cellpadding="6">
   <tr>
     <th>Nombre</th><th>Correo</th><th>Edad</th><th>Carrera</th><th>Fecha</th><th>Acciones</th>
   </tr>
@@ -43,7 +43,8 @@
   {% empty %}
   <tr><td colspan="6">Aún no hay registros.</td></tr>
   {% endfor %}
-</table>
+</table> -->
+<Table border="1" cellpadding="6">
     <tr>
       <th>Cédula</th>
       <th>Nombre</th>
@@ -63,6 +64,11 @@
       <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
 
       <td>
+        <form method="post" action="{% url 'eliminar' e.id %}"
+            onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
+        {% csrf_token %}
+        <button type="submit">Eliminar</button>
+      </form>
         <a href="{% url 'editar' e.id %}">
           <button type="button">Editar</button>
         </a>
