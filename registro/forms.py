@@ -4,7 +4,7 @@ from .models import Estudiante
 class EstudianteForm(forms.ModelForm):
     class Meta:
         model=Estudiante
-        fields=['nombre', 'apellido', 'correo', 'edad', 'carrera', 'comentarios']
+        fields=['nombre', 'apellido', 'correo', 'edad', 'carrera', 'comentarios','cedula']
         widgets={
             'comentarios': forms.Textarea(attrs={'rows':3}),
         }
