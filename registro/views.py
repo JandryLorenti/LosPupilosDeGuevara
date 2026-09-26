@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 
 from .forms import EstudianteForm
@@ -19,4 +19,9 @@ def lista(request):
     estudiantes=Estudiante.objects.order_by('-fecha_registro')
     return render(request, 'registro/lista.html', {'estudiantes': estudiantes})
 
-
+def eliminar(request, id):
+    estudiante = get_object_or_404(Estudiante, id=id)
+    if request.method == "POST":
+        estudiante.delete()
+        messages.success(request, "Registro eliminado.")
+    return redirect("lista")
