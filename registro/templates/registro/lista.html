@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registros</title>
+</head>
+<body>
+  <h1>Estudiantes registrados</h1>
+
+  <table border="1" cellpadding="6">
+    <tr>
+      <th>Nombre</th><th>Correo</th><th>Edad</th><th>Carrera</th><th>Fecha</th>
+    </tr>
+    {% for e in estudiantes %}
+    <tr>
+      <td>{{ e.nombre }} {{ e.apellido }}</td>
+      <td>{{ e.correo }}</td>
+      <td>{{ e.edad }}</td>
+      <td>{{ e.get_carrera_display }}</td>
+      <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5">Aún no hay registros.</td></tr>
+    {% endfor %}
+  </table>
+
+  <p><a href="{% url 'registrar' %}">Volver al formulario</a></p>
+</body>
+</html>
