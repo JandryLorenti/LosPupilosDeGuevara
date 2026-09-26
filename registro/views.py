@@ -21,6 +21,12 @@ def lista(request):
     estudiantes=Estudiante.objects.order_by('-fecha_registro')
     return render(request, 'registro/lista.html', {'estudiantes': estudiantes})
 
+def eliminar(request, id):
+    estudiante = get_object_or_404(Estudiante, id=id)
+    if request.method == "POST":
+        estudiante.delete()
+        messages.success(request, "Registro eliminado.")
+    return redirect("lista")
 def editar(request, id):
     estudiante = get_object_or_404(Estudiante, id=id)
 
