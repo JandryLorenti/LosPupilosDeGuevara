@@ -6,7 +6,12 @@
 </head>
 <body>
   <h1>Estudiantes registrados</h1>
-
+  {% csrf_token %}
+  <form method="POST">
+    {% csrf_token %}
+    <input type="text" name="buscar" placeholder="Buscar por nombre...">
+    <button type="submit">Buscar</button>
+</form>
   <table border="1" cellpadding="6">
     <tr>
       <th>Nombre</th><th>Correo</th><th>Edad</th><th>Carrera</th><th>Fecha</th>

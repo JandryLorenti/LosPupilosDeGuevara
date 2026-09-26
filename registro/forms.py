@@ -4,10 +4,8 @@ from .models import Estudiante
 class EstudianteForm(forms.ModelForm):
     class Meta:
         model=Estudiante
-        fields=['nombre', 'apellido', 'correo', 'edad', 'carrera', 'comentarios']
-        widgets={
-            'comentarios': forms.Textarea(attrs={'rows':3}),
-        }
+        fields=['nombre', 'apellido', 'correo', 'edad', 'carrera']
+
     
     def clean_edad(self):
         edad=self.cleaned_data['edad']

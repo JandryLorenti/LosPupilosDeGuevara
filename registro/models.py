@@ -15,7 +15,6 @@ class Estudiante(models.Model):
     correo=models.EmailField(unique=True)
     edad=models.PositiveBigIntegerField()
     carrera=models.CharField(max_length=3, choices=CARRERAS)
-    comentarios=models.TextField(blank=True)
     fecha_registro=models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
