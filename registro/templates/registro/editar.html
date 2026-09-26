@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Editar estudiante</title>
+</head>
+<body>
+  <h1>Editar información del estudiante</h1>
+
+  <!-- Muestra errores si el correo ya existe en otro estudiante -->
+  {% if messages %}
+    <ul>
+      {% for m in messages %}
+        <li style="color: red; font-weight: bold;">{{ m }}</li>
+        <script>
+          alert("{{ m }}");
+        </script>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <!-- novalidate permite que nuestra propia alerta valide el formato del correo -->
+  <form id="formEditar" method="post" novalidate>
+    {% csrf_token %}
+
+    <!-- CAMPOS BLOQUEADOS (Si el administrador intenta cambiarlos, sale alerta) -->
+    <p>
+      <label>Cédula:</label><br>
+      <input type="text" value="{{ estudiante.cedula }}" readonly 
+             style="background-color: #e9ecef; cursor: not-allowed;"
+             onclick="alertaNoPermitido('la cédula')">
+    </p>
+
+    <p>
+      <label>Nombre:</label><br>
+      <input type="text" value="{{ estudiante.nombre }}" readonly 
+             style="background-color: #e9ecef; cursor: not-allowed;"
+             onclick="alertaNoPermitido('el nombre')">
+    </p>
+
+    <p>
+      <label>Apellido:</label><br>
+      <input type="text" value="{{ estudiante.apellido }}" readonly 
+             style="background-color: #e9ecef; cursor: not-allowed;"
+             onclick="alertaNoPermitido('el apellido')">
+    </p>
+
+    <p>
+      <label>Fecha y hora de registro:</label><br>
+      <input type="text" value="{{ estudiante.fecha_registro|date:'d/m/Y H:i' }}" readonly 
+             style="background-color: #e9ecef; cursor: not-allowed;"
+             onclick="alertaNoPermitido('la fecha de registro')">
+    </p>
+
+    <p>
+      <label>Comentarios:</label><br>
+      <textarea rows="3" readonly style="background-color: #e9ecef; cursor: not-allowed;"
+                onclick="alertaNoPermitido('los comentarios')">{{ estudiante.comentarios }}</textarea>
+    </p>
+
+    <hr>
+
+    <!-- CAMPOS PERMITIDOS PARA EDITAR (Correo, Edad y Carrera) -->
+    <p>
+      <label for="correo">Correo:</label><br>
+      <input type="email" id="correo" name="correo" value="{{ estudiante.correo }}" required>
+    </p>
+
+    <p>
+      <label for="edad">Edad:</label><br>
+      <input type="number" id="edad" name="edad" value="{{ estudiante.edad }}" required>
+    </p>
+
+    <p>
+      <label for="carrera">Carrera:</label><br>
+      <select id="carrera" name="carrera" required>
+        {% for codigo, nombre_carrera in estudiante.CARRERAS %}
+          <option value="{{ codigo }}" {% if estudiante.carrera == codigo %}selected{% endif %}>
+            {{ nombre_carrera }}
+          </option>
+        {% endfor %}
+      </select>
+    </p>
+
+    <button type="submit">Guardar cambios</button>
+  </form>
+
+  <p><a href="{% url 'lista' %}">Cancelar y volver a la lista</a></p>
+
+  <script>
+    // 1. Alerta cuando intenta modificar un campo no permitido
+    function alertaNoPermitido(campo) {
+      alert("No está permitido modificar " + campo + " del estudiante. Solo puedes editar correo, edad y carrera.");
+    }
+
+    // 2. Validación al dar clic en Guardar
+    document.getElementById('formEditar').addEventListener('submit', function(event) {
+      const correo = document.getElementById('correo').value.trim();
+      const edad = parseInt(document.getElementById('edad').value.trim(), 10);
+
+      // Verifica que el correo tenga formato válido (texto@dominio.extension)
+      const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!formatoCorreo.test(correo)) {
+        event.preventDefault(); // Evita que se guarde
+        alert("El correo ingresado no tiene un formato permitido (ejemplo: estudiante@correo.com).");
+        return;
+      }
+
+      // Respeta la misma regla de forms.py (mínimo 16 años)
+      if (isNaN(edad) || edad < 16) {
+        event.preventDefault();
+        alert("La edad ingresada no es válida. El estudiante debe tener al menos 16 años.");
+        return;
+      }
+    });
+  </script>
+</body>
+</html>
