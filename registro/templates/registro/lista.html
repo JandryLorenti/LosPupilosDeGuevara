@@ -1,91 +1,385 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Registros</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registros</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #1A1A18; /* Tono oscuro de las togas */
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2.5rem 1rem;
+            
+            /* Fondo de pantalla con la imagen local */
+            background-image: url("{% static 'img/djangoimg.jpg' %}");
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+
+        /* Contenedor más ancho para acomodar la tabla */
+        .container {
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        /* Mensajes de Django */
+        .messages-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .messages-list li {
+            padding: 0.875rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            background-color: #F4FBF6;
+            color: #1B5E20;
+            border: 1px solid #C8E6C9;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Tarjeta principal */
+        .card {
+            background: #FCFBF9; /* Blanco cálido del edificio */
+            border-radius: 1rem;
+            border: 1px solid #F2EAE4; /* Borde suave inspirado en el terracota */
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 2rem 2rem 1.5rem 2rem;
+            background: linear-gradient(to bottom, #FFFFFF, #FCFBF9);
+            border-bottom: 1px solid #F2EAE4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .header-content h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1A1A18;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .icon-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 38px;
+            height: 38px;
+            border-radius: 0.75rem;
+            background-color: #FDECEE;
+            color: #9B1B22; /* Rojo carmesí de las estolas */
+        }
+
+        .icon-badge svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .card-header p {
+            font-size: 0.875rem;
+            color: #6D6863;
+        }
+
+        /* Buscador */
+        .search-form {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .search-form input[type="text"] {
+            width: 250px;
+            padding: 0.65rem 0.875rem;
+            border-radius: 0.625rem;
+            border: 1px solid #D6CEC8;
+            background-color: #FFFFFF;
+            color: #1A1A18;
+            font-size: 0.875rem;
+            font-family: inherit;
+            transition: all 0.15s ease;
+        }
+
+        .search-form input[type="text"]:focus {
+            outline: none;
+            border-color: #9B1B22;
+            box-shadow: 0 0 0 3px rgba(155, 27, 34, 0.12);
+        }
+
+        /* Botones Generales */
+        .btn-submit {
+            padding: 0.65rem 1.25rem;
+            background-color: #9B1B22;
+            color: #FFFFFF;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.625rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.15s ease, transform 0.1s ease;
+            box-shadow: 0 2px 4px rgba(155, 27, 34, 0.2);
+        }
+
+        .btn-submit:hover { background-color: #7A151A; }
+        .btn-submit:active { transform: scale(0.99); }
+
+        /* Contenedor de la Tabla */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #F8F6F4;
+            padding: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6D6863;
+            font-weight: 600;
+            border-bottom: 1px solid #F2EAE4;
+            border-top: 1px solid #F2EAE4;
+        }
+
+        td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: #4A4642;
+            border-bottom: 1px solid #F2EAE4;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #F8F6F4;
+        }
+
+        /* Botones de acción en la tabla */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .action-buttons form {
+            margin: 0;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Botón Editar: Tonos neutros cálidos */
+        .btn-edit {
+            background-color: #F2EAE4;
+            color: #4A4642;
+        }
+
+        .btn-edit:hover {
+            background-color: #D6CEC8;
+        }
+
+        /* Botón Eliminar: Tonos rojos carmesí */
+        .btn-delete {
+            background-color: #FDECEE;
+            color: #9B1B22;
+        }
+
+        .btn-delete:hover {
+            background-color: #FAD4D8;
+        }
+
+        /* Estado vacío */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6D6863;
+            font-size: 0.875rem;
+        }
+
+        /* Pie de la tarjeta */
+        .card-footer {
+            padding: 1rem 2rem;
+            background-color: #F8F6F4;
+            border-top: 1px solid #F2EAE4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8125rem;
+        }
+
+        .card-footer a {
+            color: #9B1B22;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: color 0.15s ease;
+        }
+
+        .card-footer a:hover {
+            color: #7A151A;
+            text-decoration: underline;
+        }
+    </style>
 </head>
+
 <body>
-  <h1>Estudiantes registrados</h1>
-  {% csrf_token %}
-  <form method="POST">
-    {% csrf_token %}
-    <input type="text" name="buscar" placeholder="Buscar por nombre...">
-    <button type="submit">Buscar</button>
-</form>
-  <table border="1" cellpadding="6">
+    <div class="container">
 
-  <!-- Mensaje y alerta de confirmación cuando se edita un estudiante -->
-  {% if messages %}
-    <ul>
-      {% for m in messages %}
-        <li style="color: green; font-weight: bold;">{{ m }}</li>
-        <script>
-          alert("{{ m }}");
-        </script>
-      {% endfor %}
-    </ul>
-  {% endif %}
+        <!-- Mensajes de Django -->
+        {% if messages %}
+        <ul class="messages-list">
+            {% for m in messages %}
+            <li>{{ m }}</li>
+            <script>
+                alert("{{ m }}");
+            </script>
+            {% endfor %}
+        </ul>
+        {% endif %}
 
+        <!-- Tarjeta Principal -->
+        <div class="card">
 
+            <!-- Cabecera y Buscador -->
+            <div class="card-header">
+                <div class="header-content">
+                    <h1>
+                        <div class="icon-badge">
+                            <!-- Icono de lista de usuarios -->
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                            </svg>
+                        </div>
+                        Estudiantes registrados
+                    </h1>
+                    <p>Directorio de todos los alumnos inscritos en el sistema.</p>
+                </div>
 
-  <!-- <table border="1" cellpadding="6">
-  <tr>
-    <th>Nombre</th><th>Correo</th><th>Edad</th><th>Carrera</th><th>Fecha</th><th>Acciones</th>
-  </tr>
-  {% for e in estudiantes %}
-  <tr>
-    <td>{{ e.nombre }} {{ e.apellido }}</td>
-    <td>{{ e.correo }}</td>
-    <td>{{ e.edad }}</td>
-    <td>{{ e.get_carrera_display }}</td>
-    <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
-    <td>
-      <form method="post" action="{% url 'eliminar' e.id %}"
-            onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
-        {% csrf_token %}
-        <button type="submit">Eliminar</button>
-      </form>
-    </td>
-  </tr>
-  {% empty %}
-  <tr><td colspan="6">Aún no hay registros.</td></tr>
-  {% endfor %}
-</table> -->
-<Table border="1" cellpadding="6">
-    <tr>
-      <th>Cédula</th>
-      <th>Nombre</th>
-      <th>Correo</th>
-      <th>Edad</th>
-      <th>Carrera</th>
-      <th>Fecha</th>
-      <th>Acciones</th>
-    </tr>
-    {% for e in estudiantes %}
-    <tr>
-      <td>{{ e.cedula}}</td>
-      <td>{{ e.nombre }} {{ e.apellido }}</td>
-      <td>{{ e.correo }}</td>
-      <td>{{ e.edad }}</td>
-      <td>{{ e.get_carrera_display }}</td>
-      <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
+                <!-- Formulario de Búsqueda -->
+                <form method="POST" class="search-form">
+                    {% csrf_token %}
+                    <input type="text" name="buscar" placeholder="Buscar por nombre...">
+                    <button type="submit" class="btn-submit">Buscar</button>
+                </form>
+            </div>
 
-      <td>
-        <form method="post" action="{% url 'eliminar' e.id %}"
-            onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
-        {% csrf_token %}
-        <button type="submit">Eliminar</button>
-      </form>
-        <a href="{% url 'editar' e.id %}">
-          <button type="button">Editar</button>
-        </a>
-      </td>
-    </tr>
-    {% empty %}
-    <tr><td colspan="5">Aún no hay registros.</td></tr>
-    {% endfor %}
-  </table>
+            <!-- Tabla de Datos -->
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Cédula</th>
+                            <th>Nombre</th>
+                            <th>Correo</th>
+                            <th>Edad</th>
+                            <th>Carrera</th>
+                            <th>Fecha</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for e in estudiantes %}
+                        <tr>
+                            <td><strong>{{ e.cedula }}</strong></td>
+                            <td>{{ e.nombre }} {{ e.apellido }}</td>
+                            <td>{{ e.correo }}</td>
+                            <td>{{ e.edad }}</td>
+                            <td>
+                                {{ e.get_carrera_display }}
+                            </td>
+                            <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <a href="{% url 'editar' e.id %}" class="btn-action btn-edit">
+                                        Editar
+                                    </a>
+                                    
+                                    <form method="post" action="{% url 'eliminar' e.id %}" onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-action btn-delete">Eliminar</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="empty-state">
+                                    Aún no hay registros en la base de datos.
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
 
-  <p><a href="{% url 'registrar' %}">Volver al formulario</a></p>
+            <!-- Pie de tarjeta -->
+            <div class="card-footer">
+                <p>
+                    <a href="{% url 'registrar' %}">&larr; Volver al formulario de registro</a>
+                </p>
+            </div>
+
+        </div>
+    </div>
 </body>
 </html>

@@ -9,7 +9,7 @@ class Estudiante(models.Model):
         ('DER', 'Derecho'),
         ('OTR', 'Otra'),  
     ]
-    cedula = models.CharField(max_length=10, default='0000000000')
+    cedula = models.CharField(max_length=10, default='')
     nombre=models.CharField(max_length=100)
     apellido=models.CharField(max_length=100)
     correo=models.EmailField(unique=True)
