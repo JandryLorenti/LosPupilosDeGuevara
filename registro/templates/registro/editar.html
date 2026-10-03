@@ -10,6 +10,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- SweetAlert2 para las alertas modernas -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <style>
         /* Reset & Base */
@@ -221,16 +224,22 @@
 <body>
     <div class="container">
 
-        <!-- Muestra errores si el correo ya existe en otro estudiante -->
+        <!-- Muestra errores (ej. correo repetido) usando SweetAlert2 de forma invisible -->
         {% if messages %}
-        <ul class="messages-list">
+        <div style="display: none;">
             {% for m in messages %}
-            <li>{{ m }}</li>
             <script>
-                alert("{{ m }}");
+                document.addEventListener("DOMContentLoaded", function() {
+                    Swal.fire({
+                        title: 'Atención',
+                        text: '{{ m }}',
+                        icon: 'error',
+                        confirmButtonColor: '#9B1B22'
+                    });
+                });
             </script>
             {% endfor %}
-        </ul>
+        </div>
         {% endif %}
 
         <!-- Tarjeta del Formulario -->
@@ -252,7 +261,7 @@
                 <form id="formEditar" method="post" novalidate>
                     {% csrf_token %}
 
-                    <!-- CAMPOS BLOQUEADOS (Si el administrador intenta cambiarlos, sale alerta) -->
+                    <!-- CAMPOS BLOQUEADOS (Si el administrador intenta cambiarlos, sale alerta moderna) -->
                     <p>
                         <label>Cédula:</label>
                         <input type="text" value="{{ estudiante.cedula }}" readonly class="input-readonly"
@@ -287,7 +296,8 @@
 
                     <p>
                         <label for="edad">Edad:</label>
-                        <input type="number" id="edad" name="edad" value="{{ estudiante.edad }}" required>
+                        <!-- min="{{ estudiante.edad }}" evita bajar la edad en el control del navegador -->
+                        <input type="number" id="edad" name="edad" value="{{ estudiante.edad }}" min="{{ estudiante.edad }}" required>
                     </p>
 
                     <p>
@@ -306,36 +316,121 @@
             </div>
 
             <div class="card-footer">
-                <a href="{% url 'lista' %}">Cancelar y volver a la lista</a>
+                <a href="{% url 'lista' %}">&larr; Cancelar y volver a la lista</a>
             </div>
 
         </div>
     </div>
 
     <script>
-        // 1. Alerta cuando intenta modificar un campo no permitido
+        // 1. Alerta moderna cuando intenta modificar un campo bloqueado
         function alertaNoPermitido(campo) {
-            alert("No está permitido modificar " + campo + " del estudiante. Solo puedes editar correo, edad y carrera.");
+            Swal.fire({
+                icon: 'error',
+                title: 'Acción bloqueada',
+                text: "No está permitido modificar " + campo + " del estudiante. Solo puedes editar correo, edad y carrera.",
+                confirmButtonColor: '#9B1B22'
+            });
         }
 
-        // 2. Validación al dar clic en Guardar
-        document.getElementById('formEditar').addEventListener('submit', function(event) {
-            const correo = document.getElementById('correo').value.trim();
-            const edad = parseInt(document.getElementById('edad').value.trim(), 10);
+        // CAPTURA DE DATOS INICIALES (Para saber si hubo cambios)
+        const inputCorreo = document.getElementById('correo');
+        const inputEdad = document.getElementById('edad');
+        const inputCarrera = document.getElementById('carrera');
+        
+        const valorInicialCorreo = inputCorreo.value.trim();
+        const valorInicialEdad = inputEdad.value.trim();
+        const valorInicialCarrera = inputCarrera.value;
 
-            // Verifica que el correo tenga formato válido (texto@dominio.extension)
+        // 2. Validación y doble confirmación al dar clic en Guardar
+        const formEditar = document.getElementById('formEditar');
+        
+        formEditar.addEventListener('submit', function(event) {
+            // SIEMPRE detenemos el envío automático para hacer nuestras validaciones primero
+            event.preventDefault(); 
+
+            const correoActual = inputCorreo.value.trim();
+            const edadActual = inputEdad.value.trim();
+            const carreraActual = inputCarrera.value;
+            const edadValidar = parseInt(edadActual, 10);
+            const edadMinima = parseInt("{{ estudiante.edad }}", 10);
+
+            // --- A. VALIDACIONES DE ERRORES BÁSICOS ---
             const formatoCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!formatoCorreo.test(correo)) {
-                event.preventDefault(); // Evita que se guarde
-                alert("El correo ingresado no tiene un formato permitido (ejemplo: estudiante@correo.com).");
+            if (!formatoCorreo.test(correoActual)) {
+                Swal.fire({
+                    icon: 'warning', title: 'Formato incorrecto',
+                    text: 'El correo ingresado no tiene un formato permitido.',
+                    confirmButtonColor: '#9B1B22'
+                });
                 return;
             }
 
-            // Respeta la misma regla de forms.py (mínimo 16 años)
-            if (isNaN(edad) || edad < 16) {
-                event.preventDefault();
-                alert("La edad ingresada no es válida. El estudiante debe tener al menos 16 años.");
+            if (isNaN(edadValidar) || edadValidar < edadMinima) {
+                Swal.fire({
+                    icon: 'warning', title: 'Edad inválida',
+                    text: 'La edad no puede ser menor a la que ya tiene registrada (' + edadMinima + ' años).',
+                    confirmButtonColor: '#9B1B22'
+                });
                 return;
+            }
+
+            // --- B. VERIFICAR SI HUBO CAMBIOS REALES ---
+            const huboCambios = (correoActual !== valorInicialCorreo) || 
+                                (edadActual !== valorInicialEdad) || 
+                                (carreraActual !== valorInicialCarrera);
+
+            if (!huboCambios) {
+                // ESCENARIO 1: No cambió nada
+                Swal.fire({
+                    title: 'Sin cambios detectados',
+                    text: 'No has modificado ningún dato. ¿Deseas salir sin hacer cambios?',
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#9B1B22',
+                    cancelButtonColor: '#6D6863',
+                    confirmButtonText: 'Sí, volver a la lista',
+                    cancelButtonText: 'No, quedarme a editar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Lo mandamos a la lista
+                        window.location.href = "{% url 'lista' %}";
+                    }
+                });
+            } else {
+                // ESCENARIO 2: Sí hizo cambios, confirmamos guardado
+                Swal.fire({
+                    title: '¿Guardar cambios?',
+                    text: 'Estás a punto de actualizar la información de este estudiante.',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#9B1B22',
+                    cancelButtonColor: '#6D6863',
+                    confirmButtonText: 'Sí, guardar',
+                    cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        // Mensaje de éxito momentáneo antes de enviar
+                        Swal.fire({
+                            title: 'Guardando...',
+                            icon: 'success',
+                            showConfirmButton: false,
+                            timer: 1000
+                        }).then(() => {
+                            formEditar.submit(); // Ahora sí enviamos los datos a Django
+                        });
+                    } else if (result.dismiss === Swal.DismissReason.cancel) {
+                        // Lo dejamos en la página para que siga editando
+                        Swal.fire({
+                            title: 'Cancelado',
+                            text: 'Puedes seguir editando la información.',
+                            icon: 'error',
+                            confirmButtonColor: '#9B1B22',
+                            timer: 1500,
+                            showConfirmButton: false
+                        });
+                    }
+                });
             }
         });
     </script>
