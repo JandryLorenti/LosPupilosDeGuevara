@@ -16,27 +16,15 @@ def es_admin(user):
 
 @login_required
 def registrar(request):
-    if request.method=='POST':
-        form=EstudianteForm(request.POST)
+    if request.method == 'POST':
+        form = EstudianteForm(request.POST)
         if form.is_valid():
             form.save()
             messages.success(request, '¡Registro guardado con éxito!')
             return redirect('registrar')
     else: 
-        form=EstudianteForm()
+        form = EstudianteForm()
     return render(request, 'registro/registrar.html', {'form': form})
-
-@login_required
-def lista(request):
-    # Función unificada: carga la lista y hace la búsqueda si es POST
-    estudiantes = Estudiante.objects.order_by("-fecha_registro")
-
-    if request.method == "POST":
-        buscar = request.POST.get("buscar")
-        if buscar:
-            estudiantes = estudiantes.filter(nombre__icontains=buscar)
-
-    return render(request, "registro/lista.html", {"estudiantes": estudiantes})
 
 @login_required
 def eliminar(request, id):
@@ -70,13 +58,14 @@ def editar(request, id):
         estudiante.carrera = nueva_carrera
         estudiante.save()
 
-        messages.success(request, f'¡La información de {estudiante.nombre} se actualizó correctamente!')
+        # AQUÍ SE ELIMINÓ EL MENSAJE DUPLICADO (dejamos el que muestra nombre y apellido)
         messages.success(request, f'¡La información de {estudiante.nombre} {estudiante.apellido} se actualizó correctamente!')
         return redirect('lista')
 
     return render(request, 'registro/editar.html', {'estudiante': estudiante})
 
 # ÚNICA FUNCIÓN LISTA QUE MANEJA FILTROS, BÚSQUEDA Y ELIMINACIÓN MÚLTIPLE
+@login_required
 def lista(request):
     # 1. ELIMINACIÓN MÚLTIPLE (Se captura mediante POST)
     if request.method == "POST" and "eliminar_multiple" in request.POST:
@@ -104,12 +93,13 @@ def lista(request):
     estudiantes = estudiantes.order_by(orden)
 
     return render(request, "registro/lista.html", {"estudiantes": estudiantes})
+
+
 COLUMNAS_EXCEL = ['cedula', 'nombre', 'apellido', 'correo', 'edad', 'carrera']
 MAX_ERRORES_MOSTRADOS = 20
 
-
 def _lista_con_errores(request, errores):
-    # Ahora muestra los errores en la página principal (registrar.html)
+    # Muestra los errores en la página principal (registrar.html)
     extra = len(errores) - MAX_ERRORES_MOSTRADOS
     return render(request, 'registro/registrar.html', {
         'form': EstudianteForm(),
@@ -186,6 +176,7 @@ def importar_excel(request):
 
     messages.success(request, f'Se importaron {len(formularios)} estudiantes correctamente.')
     return redirect('registrar')
+
 # Candado especial para crear cuentas (Solo Superusuarios)
 @user_passes_test(es_admin, login_url='registrar')
 def registro_usuario(request):
@@ -198,4 +189,4 @@ def registro_usuario(request):
     else:
         form = UserCreationForm()
         
-    return render(request, 'registration/registro_usuario.html', {'form': form})    
+    return render(request, 'registration/registro_usuario.html', {'form': form})
