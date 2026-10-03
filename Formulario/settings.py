@@ -127,3 +127,10 @@ MAILERS = {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
 }
+
+# settings.py
+# ... tus otras configuraciones ...
+
+LOGIN_REDIRECT_URL = 'registrar'  # O el nombre de la url a la que quieres que vaya, ej: 'lista'
+LOGOUT_REDIRECT_URL = '/cuentas/login/' # A dónde va cuando cierra sesión
+LOGIN_URL = '/cuentas/login/'
