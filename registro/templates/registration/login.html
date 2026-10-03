@@ -1,0 +1,344 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión - CRUD Universitario</title>
+
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <style>
+        /* Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #FFFFFF;
+            color: #1A1A18;
+            height: 100vh;
+            overflow: hidden; /* Evita scroll en desktop */
+        }
+
+        /* --- Contenedor Principal Split-Screen --- */
+        .split-container {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* --- Panel Izquierdo (Marca y Presentación) --- */
+        .left-panel {
+            flex: 1; /* Ocupa el 50% */
+            /* Fondo con imagen y overlay degradado rojo oscuro/carmesí */
+            background: linear-gradient(135deg, rgba(155, 27, 34, 0.9) 0%, rgba(50, 9, 11, 0.95) 100%), 
+                        url("{% static 'img/djangoimg.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            color: #FFFFFF;
+            padding: 4rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .brand-icon {
+            font-size: 3rem;
+            line-height: 1;
+            margin-bottom: 3rem;
+            font-weight: 800;
+        }
+
+        .left-content h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            letter-spacing: -0.03em;
+        }
+
+        .left-content p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.85);
+            max-width: 90%;
+        }
+
+        .footer-credits {
+            font-size: 0.875rem;
+            color: rgba(255, 255, 255, 0.6);
+            line-height: 1.5;
+        }
+        
+        .footer-credits strong {
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 500;
+        }
+
+        /* --- Panel Derecho (Formulario de Login) --- */
+        .right-panel {
+            flex: 1; /* Ocupa el 50% */
+            background-color: #FFFFFF;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 400px;
+        }
+
+        /* Logo responsive (solo visible en móviles) */
+        .mobile-brand {
+            display: none;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #9B1B22;
+            margin-bottom: 2rem;
+        }
+
+        .form-wrapper h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .form-wrapper .subtitle {
+            font-size: 0.875rem;
+            color: #6D6863;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Alerta de Error */
+        .error-msg {
+            background-color: #FDECEE;
+            color: #9B1B22;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #9B1B22;
+        }
+
+        /* Estilos Minimalistas para Inputs */
+        .input-group {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem 0;
+            font-size: 1rem;
+            color: #1A1A18;
+            background-color: transparent;
+            border: none;
+            border-bottom: 2px solid #E6E0DA;
+            outline: none;
+            transition: border-color 0.3s ease;
+            font-family: inherit;
+        }
+
+        /* El input de Django no trae placeholder por defecto, 
+           así que usamos un label flotante o placeholder si es posible. 
+           En este caso estilizamos directo. */
+        .input-group input::placeholder {
+            color: #8C867F;
+            font-weight: 400;
+        }
+
+        .input-group input:focus {
+            border-bottom-color: #9B1B22;
+        }
+
+        /* Ojito de contraseña */
+        .password-wrapper input {
+            padding-right: 2.5rem;
+        }
+
+        .btn-ojito {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #8C867F;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: color 0.2s ease;
+        }
+
+        .btn-ojito:hover {
+            color: #1A1A18;
+        }
+
+        .btn-ojito svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Botón Iniciar Sesión */
+        .btn-submit {
+            width: 100%;
+            padding: 1rem;
+            background-color: #1A1A18; /* Negro/Oscuro elegante */
+            color: #FFFFFF;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background-color: #9B1B22; /* Cambia al rojo carmesí al pasar el ratón */
+        }
+
+        .btn-submit:active {
+            transform: scale(0.98);
+        }
+
+        /* Responsive Design (Para celulares y tablets pequeñas) */
+        @media (max-width: 900px) {
+            .split-container {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                overflow-y: auto;
+            }
+            body {
+                overflow: auto;
+            }
+            .left-panel {
+                padding: 3rem 2rem;
+                flex: none;
+            }
+            .brand-icon {
+                display: none;
+            }
+            .left-content h1 {
+                font-size: 2.5rem;
+            }
+            .footer-credits {
+                margin-top: 2rem;
+            }
+            .right-panel {
+                padding: 3rem 2rem;
+                flex: none;
+            }
+            .mobile-brand {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="split-container">
+        
+        <!-- MITAD IZQUIERDA -->
+        <div class="left-panel">
+            <div class="left-content">
+                <div class="brand-icon"></div>
+                <h1>CRUD<br>Universitario</h1>
+                <p>Gestiona los registros y expedientes de los estudiantes de Ingeniería en Software de manera centralizada y segura.</p>
+            </div>
+            
+            <div class="footer-credits">
+                <p>© 2026 Desarrollado por:</p>
+                <p>
+                    <strong>Axel Andres Acosta Lopez</strong><br>
+                    <strong>Juan David Almendariz Arana</strong><br>
+                    <strong>Jandry Jaren Lorenti Aguilar</strong><br>
+                    <strong>Rodrigo Josue Guevara Reyes</strong>
+                </p>
+            </div>
+        </div>
+
+        <!-- MITAD DERECHA -->
+        <div class="right-panel">
+            <div class="form-wrapper">
+                <div class="mobile-brand">CRUD Universitario</div>
+                
+                <h2>¡Bienvenido!</h2>
+                <p class="subtitle">Ingresa tus credenciales para continuar al sistema.</p>
+
+                {% if form.errors %}
+                <div class="error-msg">
+                    Usuario o contraseña incorrectos. Verifica tus datos.
+                </div>
+                {% endif %}
+
+                <form method="post" action="{% url 'login' %}">
+                    {% csrf_token %}
+
+                    <!-- Campo Usuario ocultando el label por defecto de Django -->
+                    <div class="input-group">
+                        <input type="text" name="username" id="id_username" placeholder="Nombre de usuario" required autocomplete="username">
+                    </div>
+
+                    <!-- Campo Contraseña -->
+                    <div class="input-group password-wrapper">
+                        <input type="password" name="password" id="id_password" placeholder="Contraseña" required autocomplete="current-password">
+                        
+                        <button type="button" id="btn-ojito" class="btn-ojito" tabindex="-1">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                                <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                                <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <button type="submit" class="btn-submit">Iniciar Sesión</button>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Script del ojito -->
+    <script>
+        const btnOjito = document.getElementById('btn-ojito');
+        const inputPassword = document.getElementById('id_password'); 
+
+        btnOjito.addEventListener('click', function () {
+            if (inputPassword.type === 'password') {
+                inputPassword.type = 'text';
+                btnOjito.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7 7 0 0 0-2.79.588l.77.771A6 6 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755q-.247.248-.517.486z"/>
+                        <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829"/>
+                        <path d="M3.35 5.47q-.27.24-.518.487A13 13 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7 7 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12z"/>
+                    </svg>
+                `;
+            } else {
+                inputPassword.type = 'password';
+                btnOjito.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z"/>
+                        <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0"/>
+                    </svg>
+                `;
+            }
+        });
+    </script>
+</body>
+</html> 
