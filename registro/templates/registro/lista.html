@@ -56,6 +56,127 @@
         .search-form input[type="text"]:focus { outline: none; border-color: #9B1B22; box-shadow: 0 0 0 3px rgba(155, 27, 34, 0.12); }
         .btn-submit { padding: 0.65rem 1.25rem; background-color: #9B1B22; color: #FFFFFF; font-size: 0.875rem; font-weight: 600; border: none; border-radius: 0.625rem; cursor: pointer; transition: all 0.15s ease; }
         .btn-submit:hover { background-color: #7A151A; }
+        .btn-submit:active { transform: scale(0.99); }
+
+        
+        /* Contenedor de la Tabla */
+        .table-responsive {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background-color: #F8F6F4;
+            padding: 1rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6D6863;
+            font-weight: 600;
+            border-bottom: 1px solid #F2EAE4;
+            border-top: 1px solid #F2EAE4;
+        }
+
+        td {
+            padding: 1rem;
+            font-size: 0.875rem;
+            color: #4A4642;
+            border-bottom: 1px solid #F2EAE4;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #F8F6F4;
+        }
+
+        /* Botones de acción en la tabla */
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .action-buttons form {
+            margin: 0;
+        }
+
+        .btn-action {
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.15s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Botón Editar: Tonos neutros cálidos */
+        .btn-edit {
+            background-color: #F2EAE4;
+            color: #4A4642;
+        }
+
+        .btn-edit:hover {
+            background-color: #D6CEC8;
+        }
+
+        /* Botón Eliminar: Tonos rojos carmesí */
+        .btn-delete {
+            background-color: #FDECEE;
+            color: #9B1B22;
+        }
+
+        .btn-delete:hover {
+            background-color: #FAD4D8;
+        }
+
+        /* Estado vacío */
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #6D6863;
+            font-size: 0.875rem;
+        }
+
+        /* Pie de la tarjeta */
+        .card-footer {
+            padding: 1rem 2rem;
+            background-color: #F8F6F4;
+            border-top: 1px solid #F2EAE4;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.8125rem;
+        }
+
+        .card-footer a {
+            color: #9B1B22;
+            text-decoration: none;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            transition: color 0.15s ease;
+        }
+
+        .card-footer a:hover {
+            color: #7A151A;
+            text-decoration: underline;
+        }
         
         .table-responsive { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; text-align: left; }
@@ -131,6 +252,9 @@
                 </form>
             </div>
 
+            
+
+            <!-- Tabla de Datos -->
             <div class="table-responsive">
                 <table>
                     <thead>

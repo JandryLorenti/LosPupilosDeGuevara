@@ -7,5 +7,6 @@ urlpatterns=[
     path('lista/', views.lista, name='lista'),
     path("eliminar/<int:id>/", views.eliminar, name="eliminar"),
     path('editar/<int:id>/', views.editar, name='editar'),
+    path('importar/', views.importar_excel, name='importar_excel'),
     path('crear-cuenta/', views.registro_usuario, name='registro_usuario')
 ]
