@@ -11,7 +11,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
+        
     <style>
+        .import-card { margin-top: 0; }
+        .import-card .card-body { padding: 1.25rem 2rem 1.5rem 2rem; }
+        .import-card h2 { font-size: 1rem; font-weight: 700; color: #1A1A18; margin-bottom: 0.25rem; }
+        .import-card .help { font-size: 0.75rem; color: #6D6863; margin-bottom: 1rem; }
+        .import-card input[type="file"] { width: 100%; font-size: 0.8125rem; font-family: inherit; margin-bottom: 0.75rem; }
+        .import-errors {
+            padding: 0.875rem 1rem;
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            background-color: #FDECEE;
+            border: 1px solid #FAD4D8;
+            color: #9B1B22;
+            font-size: 0.8125rem;
+        }
+        .import-errors ul { margin: 0.5rem 0 0 1.25rem; }
+
         /* Reset & Base */
         * {
             box-sizing: border-box;
@@ -37,9 +54,26 @@
         }
 
         .container {
-            width: 100%;
-            max-width: 480px;
-        }
+    width: 100%;
+    max-width: 980px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    align-items: start;
+}
+
+/* Los mensajes de Django ocupan todo el ancho arriba */
+.messages-list {
+    grid-column: 1 / -1;
+}
+
+/* En pantallas pequeñas vuelven a apilarse */
+@media (max-width: 800px) {
+    .container {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+    }
+}
 
         /* Mensajes de Django */
         .messages-list {
@@ -260,6 +294,27 @@
 
             <div class="card-footer">
                 <a href="{% url 'lista' %}">&larr; Ver registros</a>
+            </div>
+        </div>
+
+                <div class="card import-card">
+            <div class="card-body">
+                <h2>Importar desde Excel</h2>
+                <p class="help">Sube un archivo .xlsx con las columnas: cedula, nombre, apellido, correo, edad, carrera. Si alguna fila tiene un error, se rechaza todo el archivo.</p>
+                {% if errores_importacion %}
+                <div class="import-errors">
+                    <strong>No se pudo importar el archivo:</strong>
+                    <ul>
+                        {% for e in errores_importacion %}<li>{{ e }}</li>{% endfor %}
+                        {% if errores_extra %}<li>... y {{ errores_extra }} errores más.</li>{% endif %}
+                    </ul>
+                </div>
+                {% endif %}
+                <form method="post" action="{% url 'importar_excel' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="archivo" accept=".xlsx" required>
+                    <button type="submit" class="btn-submit">Subir archivo</button>
+                </form>
             </div>
         </div>
 
