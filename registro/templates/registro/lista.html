@@ -5,305 +5,116 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Registros</title>
-
-    <!-- Google Fonts: Inter -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <style>
-        /* Reset & Base */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body { 
+            font-family: 'Inter', sans-serif; color: #1A1A18; min-height: 100vh; 
+            display: flex; align-items: flex-start; justify-content: center; 
+            padding: 6rem 1rem 2rem 1rem; /* Espacio superior para la barra */
+            background-image: url("{% static 'img/djangoimg.jpg' %}"); 
+            background-repeat: no-repeat; background-size: cover; 
+            background-position: center; background-attachment: fixed; 
         }
 
-        body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
-            color: #1A1A18; /* Tono oscuro de las togas */
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2.5rem 1rem;
-            
-            /* Fondo de pantalla con la imagen local */
-            background-image: url("{% static 'img/djangoimg.jpg' %}");
-            background-repeat: no-repeat;
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
+        /* --- BARRA DE NAVEGACIÓN (VIAJE RÁPIDO) --- */
+        .navbar {
+            width: 100%; background-color: #FCFBF9; border-bottom: 1px solid #F2EAE4;
+            padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
+            position: fixed; top: 0; left: 0; z-index: 1000;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
+        .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #4A4642; font-weight: 600; font-size: 0.9rem; transition: color 0.15s ease; }
+        .nav-links a:hover, .nav-links a.active { color: #9B1B22; }
+        
+        .user-actions { display: flex; align-items: center; gap: 1.5rem; }
+        .user-greeting { font-size: 0.9rem; font-weight: 600; color: #1A1A18; }
+        
+        .btn-nav { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none; transition: all 0.15s ease; }
+        .btn-admin { background-color: #FDECEE; color: #9B1B22; border: 1px solid #FAD4D8; }
+        .btn-admin:hover { background-color: #FAD4D8; }
+        .btn-logout { background-color: #9B1B22; color: white; }
+        .btn-logout:hover { background-color: #7A151A; }
+        /* ------------------------------------------- */
 
-        /* Contenedor más ancho para acomodar la tabla */
-        .container {
-            width: 100%;
-            max-width: 1000px;
-        }
-
-        /* Mensajes de Django */
-        .messages-list {
-            list-style: none;
-            margin-bottom: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .messages-list li {
-            padding: 0.875rem 1rem;
-            border-radius: 0.75rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-            background-color: #F4FBF6;
-            color: #1B5E20;
-            border: 1px solid #C8E6C9;
-            display: flex;
-            align-items: center;
-        }
-
-        /* Tarjeta principal */
-        .card {
-            background: #FCFBF9; /* Blanco cálido del edificio */
-            border-radius: 1rem;
-            border: 1px solid #F2EAE4; /* Borde suave inspirado en el terracota */
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.15), 0 10px 10px -5px rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-
-        .card-header {
-            padding: 2rem 2rem 1.5rem 2rem;
-            background: linear-gradient(to bottom, #FFFFFF, #FCFBF9);
-            border-bottom: 1px solid #F2EAE4;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .header-content h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1A1A18;
-            letter-spacing: -0.025em;
-            margin-bottom: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .icon-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 38px;
-            height: 38px;
-            border-radius: 0.75rem;
-            background-color: #FDECEE;
-            color: #9B1B22; /* Rojo carmesí de las estolas */
-        }
-
-        .icon-badge svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        .card-header p {
-            font-size: 0.875rem;
-            color: #6D6863;
-        }
-
-        /* Buscador */
-        .search-form {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .search-form input[type="text"] {
-            width: 250px;
-            padding: 0.65rem 0.875rem;
-            border-radius: 0.625rem;
-            border: 1px solid #D6CEC8;
-            background-color: #FFFFFF;
-            color: #1A1A18;
-            font-size: 0.875rem;
-            font-family: inherit;
-            transition: all 0.15s ease;
-        }
-
-        .search-form input[type="text"]:focus {
-            outline: none;
-            border-color: #9B1B22;
-            box-shadow: 0 0 0 3px rgba(155, 27, 34, 0.12);
-        }
-
-        /* Botones Generales */
-        .btn-submit {
-            padding: 0.65rem 1.25rem;
-            background-color: #9B1B22;
-            color: #FFFFFF;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: none;
-            border-radius: 0.625rem;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            transition: background-color 0.15s ease, transform 0.1s ease;
-            box-shadow: 0 2px 4px rgba(155, 27, 34, 0.2);
-        }
-
+        .container { width: 100%; max-width: 1000px; }
+        .messages-list { list-style: none; margin-bottom: 1.5rem; display: flex; flex-direction: column; gap: 0.5rem; }
+        .messages-list li { padding: 0.875rem 1rem; border-radius: 0.75rem; font-size: 0.875rem; font-weight: 500; background-color: #F4FBF6; color: #1B5E20; border: 1px solid #C8E6C9; display: flex; align-items: center; }
+        
+        .card { background: #FCFBF9; border-radius: 1rem; border: 1px solid #F2EAE4; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.15); overflow: hidden; }
+        .card-header { padding: 2rem 2rem 1.5rem 2rem; background: linear-gradient(to bottom, #FFFFFF, #FCFBF9); border-bottom: 1px solid #F2EAE4; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+        .header-content h1 { font-size: 1.5rem; font-weight: 700; color: #1A1A18; margin-bottom: 0.25rem; display: flex; align-items: center; gap: 0.75rem; }
+        .icon-badge { display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; border-radius: 0.75rem; background-color: #FDECEE; color: #9B1B22; }
+        .icon-badge svg { width: 20px; height: 20px; }
+        .card-header p { font-size: 0.875rem; color: #6D6863; }
+        
+        .search-form { display: flex; gap: 0.5rem; }
+        .search-form input[type="text"] { width: 250px; padding: 0.65rem 0.875rem; border-radius: 0.625rem; border: 1px solid #D6CEC8; font-size: 0.875rem; font-family: inherit; transition: all 0.15s ease; }
+        .search-form input[type="text"]:focus { outline: none; border-color: #9B1B22; box-shadow: 0 0 0 3px rgba(155, 27, 34, 0.12); }
+        .btn-submit { padding: 0.65rem 1.25rem; background-color: #9B1B22; color: #FFFFFF; font-size: 0.875rem; font-weight: 600; border: none; border-radius: 0.625rem; cursor: pointer; transition: all 0.15s ease; }
         .btn-submit:hover { background-color: #7A151A; }
-        .btn-submit:active { transform: scale(0.99); }
-
-        /* Contenedor de la Tabla */
-        .table-responsive {
-            width: 100%;
-            overflow-x: auto;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: left;
-        }
-
-        th {
-            background-color: #F8F6F4;
-            padding: 1rem;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            color: #6D6863;
-            font-weight: 600;
-            border-bottom: 1px solid #F2EAE4;
-            border-top: 1px solid #F2EAE4;
-        }
-
-        td {
-            padding: 1rem;
-            font-size: 0.875rem;
-            color: #4A4642;
-            border-bottom: 1px solid #F2EAE4;
-            vertical-align: middle;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tr:hover td {
-            background-color: #F8F6F4;
-        }
-
-        /* Botones de acción en la tabla */
-        .action-buttons {
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-        }
-
-        .action-buttons form {
-            margin: 0;
-        }
-
-        .btn-action {
-            padding: 0.4rem 0.75rem;
-            border-radius: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 600;
-            border: none;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.15s ease;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* Botón Editar: Tonos neutros cálidos */
-        .btn-edit {
-            background-color: #F2EAE4;
-            color: #4A4642;
-        }
-
-        .btn-edit:hover {
-            background-color: #D6CEC8;
-        }
-
-        /* Botón Eliminar: Tonos rojos carmesí */
-        .btn-delete {
-            background-color: #FDECEE;
-            color: #9B1B22;
-        }
-
-        .btn-delete:hover {
-            background-color: #FAD4D8;
-        }
-
-        /* Estado vacío */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #6D6863;
-            font-size: 0.875rem;
-        }
-
-        /* Pie de la tarjeta */
-        .card-footer {
-            padding: 1rem 2rem;
-            background-color: #F8F6F4;
-            border-top: 1px solid #F2EAE4;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 0.8125rem;
-        }
-
-        .card-footer a {
-            color: #9B1B22;
-            text-decoration: none;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.35rem;
-            transition: color 0.15s ease;
-        }
-
-        .card-footer a:hover {
-            color: #7A151A;
-            text-decoration: underline;
-        }
+        
+        .table-responsive { width: 100%; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background-color: #F8F6F4; padding: 1rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: #6D6863; font-weight: 600; border-bottom: 1px solid #F2EAE4; border-top: 1px solid #F2EAE4; }
+        td { padding: 1rem; font-size: 0.875rem; color: #4A4642; border-bottom: 1px solid #F2EAE4; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background-color: #F8F6F4; }
+        
+        .action-buttons { display: flex; gap: 0.5rem; align-items: center; }
+        .action-buttons form { margin: 0; }
+        .btn-action { padding: 0.4rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; border: none; cursor: pointer; text-decoration: none; transition: all 0.15s ease; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-edit { background-color: #F2EAE4; color: #4A4642; }
+        .btn-edit:hover { background-color: #D6CEC8; }
+        .btn-delete { background-color: #FDECEE; color: #9B1B22; }
+        .btn-delete:hover { background-color: #FAD4D8; }
+        
+        .empty-state { text-align: center; padding: 3rem 1rem; color: #6D6863; font-size: 0.875rem; }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <!-- Barra de Viaje Rápido Superior -->
+    {% if user.is_authenticated %}
+    <nav class="navbar">
+        <div class="nav-links">
+            <a href="{% url 'registrar' %}"> Cargar Estudiante</a>
+            <a href="{% url 'lista' %}" class="active"> Lista de Estudiantes</a>
+        </div>
+        <div class="user-actions">
+            <span class="user-greeting">Hola, {{ user.username }}</span>
+            
+            <!-- Botón exclusivo para Superusuario -->
+            {% if user.is_superuser %}
+                <a href="{% url 'registro_usuario' %}" class="btn-nav btn-admin">+ Crear cuenta</a>
+            {% endif %}
 
-        <!-- Mensajes de Django -->
+            <form action="{% url 'logout' %}" method="post" style="margin: 0;">
+                {% csrf_token %}
+                <button type="submit" class="btn-nav btn-logout">Cerrar Sesión</button>
+            </form>
+        </div>
+    </nav>
+    {% endif %}
+
+    <div class="container">
         {% if messages %}
         <ul class="messages-list">
             {% for m in messages %}
             <li>{{ m }}</li>
-            <script>
-                alert("{{ m }}");
-            </script>
+            <script>alert("{{ m }}");</script>
             {% endfor %}
         </ul>
         {% endif %}
 
-        <!-- Tarjeta Principal -->
         <div class="card">
-
-            <!-- Cabecera y Buscador -->
             <div class="card-header">
                 <div class="header-content">
                     <h1>
                         <div class="icon-badge">
-                            <!-- Icono de lista de usuarios -->
                             <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
@@ -313,7 +124,6 @@
                     <p>Directorio de todos los alumnos inscritos en el sistema.</p>
                 </div>
 
-                <!-- Formulario de Búsqueda -->
                 <form method="POST" class="search-form">
                     {% csrf_token %}
                     <input type="text" name="buscar" placeholder="Buscar por nombre...">
@@ -321,7 +131,6 @@
                 </form>
             </div>
 
-            <!-- Tabla de Datos -->
             <div class="table-responsive">
                 <table>
                     <thead>
@@ -342,15 +151,11 @@
                             <td>{{ e.nombre }} {{ e.apellido }}</td>
                             <td>{{ e.correo }}</td>
                             <td>{{ e.edad }}</td>
-                            <td>
-                                {{ e.get_carrera_display }}
-                            </td>
+                            <td>{{ e.get_carrera_display }}</td>
                             <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
                             <td>
                                 <div class="action-buttons">
-                                    <a href="{% url 'editar' e.id %}" class="btn-action btn-edit">
-                                        Editar
-                                    </a>
+                                    <a href="{% url 'editar' e.id %}" class="btn-action btn-edit">Editar</a>
                                     
                                     <form method="post" action="{% url 'eliminar' e.id %}" onsubmit="return confirm('¿Seguro que deseas eliminar este registro?');">
                                         {% csrf_token %}
@@ -371,14 +176,6 @@
                     </tbody>
                 </table>
             </div>
-
-            <!-- Pie de tarjeta -->
-            <div class="card-footer">
-                <p>
-                    <a href="{% url 'registrar' %}">&larr; Volver al formulario de registro</a>
-                </p>
-            </div>
-
         </div>
     </div>
 </body>
