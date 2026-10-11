@@ -56,6 +56,12 @@ def editar(request, id):
         if Estudiante.objects.filter(correo=nuevo_correo).exclude(id=estudiante.id).exists():
             messages.error(request, 'Ese correo ya está registrado con otro estudiante.')
             return render(request, 'registro/editar.html', {'estudiante': estudiante})
+        if not nueva_edad.isdecimal() or not (16 <= int(nueva_edad) <= 100):
+            messages.error(request, 'La edad debe ser un número entre 16 y 100.')
+            return render(request, 'registro/editar.html', {'estudiante': estudiante})
+        if nueva_carrera not in dict(Estudiante.CARRERAS):
+            messages.error(request, 'Selecciona una carrera válida.')
+            return render(request, 'registro/editar.html', {'estudiante': estudiante})
 
         estudiante.correo = nuevo_correo
         estudiante.edad = int(nueva_edad)
@@ -94,6 +100,9 @@ def lista(request):
     if carrera:
         estudiantes = estudiantes.filter(carrera=carrera)
 
+    ORDENES_VALIDOS = ['-fecha_registro', 'fecha_registro', 'apellido', '-apellido']
+    if orden not in ORDENES_VALIDOS:
+        orden = '-fecha_registro'
     estudiantes = estudiantes.order_by(orden)
 
     return render(request, "registro/lista.html", {"estudiantes": estudiantes})
@@ -110,7 +119,8 @@ def _lista_con_errores(request, errores):
         'errores_importacion': errores[:MAX_ERRORES_MOSTRADOS],
         'errores_extra': extra if extra > 0 else 0,
     })
-    
+
+@login_required
 def importar_excel(request):
     if request.method != 'POST':
         return redirect('registrar')
