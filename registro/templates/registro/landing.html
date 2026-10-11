@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro Universitario | Gestión de estudiantes</title>
+<meta name="description" content="Registra estudiantes, impórtalos desde Excel, búscalos y mantén la lista al día desde un solo sistema.">
+<meta name="theme-color" content="#9B1B22">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%239B1B22'/%3E%3Ctext x='16' y='22' font-size='15' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3ERU%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--primary:#9B1B22;--primary-dark:#7A151A;--tint:#FDECEE;--tint-2:#FAD4D8;--bg:#FCFBF9;--bg-2:#F2EAE4;--ink:#1A1A18;--ink-2:#4A4642;--muted:#6D6863;--line:#E6E0DA;--ok:#1B5E20;--ok-bg:#F4FBF6}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:76px}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;color:var(--ink-2);background:var(--bg);line-height:1.6}
+a{color:inherit;text-decoration:none}
+ul,ol{list-style:none}
+h1,h2,h3{color:var(--ink);line-height:1.15;letter-spacing:-.02em}
+:focus-visible{outline:3px solid var(--primary);outline-offset:3px;border-radius:6px}
+.wrap{width:100%;max-width:1120px;margin:0 auto;padding:0 1.5rem}
+
+.btn{display:inline-flex;align-items:center;justify-content:center;padding:.6rem 1.15rem;border-radius:10px;font:600 .95rem Inter,sans-serif;border:2px solid transparent;cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+.btn-lg{padding:.85rem 1.5rem;font-size:1rem}
+.btn-primary{background:var(--primary);color:#fff}
+.btn-primary:hover{background:var(--primary-dark)}
+.btn-outline{border-color:var(--line);color:var(--ink);background:#fff}
+.btn-outline:hover{border-color:var(--primary);color:var(--primary)}
+.btn-white{background:#fff;color:var(--primary)}
+.btn-white:hover{background:var(--tint)}
+
+.header{position:sticky;top:0;z-index:50;background:rgba(252,251,249,.92);backdrop-filter:blur(8px);border-bottom:1px solid transparent;transition:border-color .2s}
+.header.scrolled{border-color:var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:68px}
+.logo{display:flex;align-items:center;gap:.65rem;font-weight:700;color:var(--ink)}
+.mark{display:grid;place-items:center;width:34px;height:34px;border-radius:9px;background:var(--primary);color:#fff;font-size:.8rem;font-weight:800}
+.nav{display:flex;align-items:center;gap:1.75rem;font-size:.92rem;font-weight:600}
+.nav a:not(.btn){color:var(--ink-2)}
+.nav a:not(.btn):hover,.nav a.active{color:var(--primary)}
+.menu-btn{display:none;background:none;border:0;padding:.5rem;cursor:pointer}
+.menu-btn span{display:block;width:22px;height:2px;margin:5px 0;background:var(--ink);transition:transform .2s,opacity .2s}
+.menu-btn[aria-expanded=true] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.menu-btn[aria-expanded=true] span:nth-child(2){opacity:0}
+.menu-btn[aria-expanded=true] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+
+.hero{padding:4.5rem 0 5rem;animation:in .7s ease both}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:3.5rem;align-items:center}
+h1{font-size:clamp(2.2rem,4.6vw,3.5rem);font-weight:800;max-width:15ch}
+.lead{margin:1.4rem 0 2rem;font-size:1.15rem;max-width:46ch}
+.actions{display:flex;flex-wrap:wrap;gap:.8rem}
+
+.panel{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 40px -22px rgba(50,9,11,.35);overflow:hidden}
+.panel-top{display:flex;align-items:center;gap:.8rem;padding:.75rem 1rem;background:var(--bg-2);border-bottom:1px solid var(--line);font-size:.82rem;font-weight:600;color:var(--ink-2)}
+.dots{display:flex;gap:6px}.dots i{width:10px;height:10px;border-radius:50%;background:var(--tint-2)}
+.panel-body{padding:1.25rem;display:grid;gap:1rem}
+.msg{padding:.9rem 1rem;border-radius:10px;font-size:.88rem}
+.msg strong{display:block;font-weight:600}
+.msg ul{margin-top:.5rem;display:grid;gap:.3rem}
+.msg-err{background:var(--tint);color:var(--primary);border-left:4px solid var(--primary)}
+.msg-ok{background:var(--ok-bg);color:var(--ok);border-left:4px solid var(--ok)}
+.panel-note{font-size:.85rem;color:var(--muted);text-align:center}
+figcaption{padding:0 1.25rem 1rem;font-size:.78rem;color:var(--muted)}
+
+.section{padding:5rem 0}
+.alt{background:var(--bg-2)}
+h2{font-size:clamp(1.7rem,3vw,2.3rem);font-weight:700}
+.sub{margin-top:.8rem;max-width:56ch;color:var(--muted)}
+.features{display:grid;grid-template-columns:repeat(2,1fr);gap:2.25rem 3.5rem;margin-top:3rem}
+.features li{display:flex;gap:1rem}
+.ico{flex:none;width:44px;height:44px;padding:11px;border-radius:12px;background:var(--tint);stroke:var(--primary);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.features h3,.steps h3{font-size:1.08rem;font-weight:600;letter-spacing:-.01em;margin-bottom:.25rem}
+.features p,.steps p{color:var(--muted);max-width:44ch}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:2.5rem;margin-top:3rem;counter-reset:s}
+.n{display:grid;place-items:center;width:38px;height:38px;margin-bottom:1rem;border-radius:50%;background:var(--primary);color:#fff;font-weight:700}
+
+.access{padding:5rem 0;text-align:center;color:#fff;background:linear-gradient(135deg,#9B1B22 0%,#32090B 100%)}
+.access h2{color:#fff}
+.access p{margin:.9rem 0 2rem;color:rgba(255,255,255,.88)}
+
+.footer{padding:1.75rem 0;background:var(--bg);border-top:1px solid var(--line);font-size:.88rem;color:var(--muted)}
+.foot{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.5rem}
+
+@media (max-width:900px){
+  .hero{padding:3rem 0 3.5rem}
+  .hero-grid{grid-template-columns:1fr;gap:2.5rem}
+  .features,.steps{grid-template-columns:1fr}
+  .menu-btn{display:block}
+  .nav{position:absolute;top:68px;left:0;right:0;flex-direction:column;align-items:stretch;gap:0;padding:.5rem 1.5rem 1.25rem;background:var(--bg);border-bottom:1px solid var(--line);display:none}
+  .nav.open{display:flex}
+  .nav a:not(.btn){padding:.8rem 0;border-bottom:1px solid var(--line)}
+  .nav .btn{margin-top:1rem}
+}
+@media (max-width:480px){.section,.access{padding:3.5rem 0}.btn-lg{width:100%}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.hero{animation:none}*{transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<symbol id="i-user" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-edit" viewBox="0 0 24 24"><path d="M17 3a2.8 2.8 0 0 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></symbol>
+<symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
+</svg>
+
+<header class="header" id="header">
+  <div class="wrap bar">
+    <a href="#inicio" class="logo"><span class="mark">RU</span>Registro Universitario</a>
+    <button class="menu-btn" id="menuBtn" aria-label="Abrir menú" aria-expanded="false" aria-controls="nav"><span></span><span></span><span></span></button>
+    <nav class="nav" id="nav" aria-label="Principal">
+      <a href="#funciones">Qué incluye</a>
+      <a href="#pasos">Cómo se usa</a>
+      <a href="#acceso">Acceso</a>
+      {% if user.is_authenticated %}<a href="{% url 'registrar' %}" class="btn btn-primary">Ir al registro</a>{% else %}<a href="{% url 'login' %}" class="btn btn-primary">Iniciar sesión</a>{% endif %}
+    </nav>
+  </div>
+</header>
+
+<main>
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div class="hero-text">
+      <h1>Registra a tus estudiantes y encuentra cada dato en segundos.</h1>
+      <p class="lead">Carga estudiantes uno por uno o desde un Excel, busca por nombre, filtra por carrera y edita o elimina con confirmación.</p>
+      <div class="actions">
+        {% if user.is_authenticated %}<a href="{% url 'registrar' %}" class="btn btn-primary btn-lg">Ir al registro</a>{% else %}<a href="{% url 'login' %}" class="btn btn-primary btn-lg">Iniciar sesión</a>{% endif %}
+        <a href="#funciones" class="btn btn-outline btn-lg">Ver qué incluye</a>
+      </div>
+    </div>
+
+    <figure class="panel" aria-label="Ejemplo de importación desde Excel">
+      <div class="panel-top"><span class="dots"><i></i><i></i><i></i></span>estudiantes.xlsx</div>
+      <div class="panel-body">
+        <div class="msg msg-err">
+          <strong>Archivo rechazado: no se guardó ningún registro.</strong>
+          <ul>
+            <li>Fila 4 (cedula): ya existe un estudiante con esa cédula.</li>
+            <li>Fila 9 (edad): Debes tener al menos 16 años y no más de 100.</li>
+          </ul>
+        </div>
+        <p class="panel-note">Corriges las filas y vuelves a subir el archivo.</p>
+        <div class="msg msg-ok"><strong>Se importaron 42 estudiantes correctamente.</strong></div>
+      </div>
+      <figcaption>Ejemplo del reporte de errores y de la confirmación.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="section" id="funciones">
+  <div class="wrap">
+    <h2>Lo que incluye el sistema</h2>
+    <p class="sub">Todo lo necesario para llevar el registro de estudiantes, sin hojas de cálculo sueltas.</p>
+    <ul class="features">
+      <li><svg class="ico"><use href="#i-user"/></svg><div><h3>Registro con validación</h3><p>Cédula de 10 dígitos, edad entre 16 y 100 años y correo sin repetir.</p></div></li>
+      <li><svg class="ico"><use href="#i-up"/></svg><div><h3>Importación desde Excel</h3><p>Sube un .xlsx con cédula, nombre, apellido, correo, edad y carrera. Si una fila falla, no se guarda nada y ves el error exacto.</p></div></li>
+      <li><svg class="ico"><use href="#i-search"/></svg><div><h3>Búsqueda y filtros</h3><p>Busca por nombre, filtra por carrera y ordena la lista.</p></div></li>
+      <li><svg class="ico"><use href="#i-edit"/></svg><div><h3>Edición</h3><p>Corrige el correo, la edad o la carrera de un estudiante desde un solo formulario.</p></div></li>
+      <li><svg class="ico"><use href="#i-trash"/></svg><div><h3>Eliminación con confirmación</h3><p>Elimina uno o varios estudiantes y confirma antes de borrar.</p></div></li>
+      <li><svg class="ico"><use href="#i-lock"/></svg><div><h3>Acceso con cuenta</h3><p>Solo entra quien tiene cuenta, y solo el superusuario puede crear cuentas nuevas.</p></div></li>
+    </ul>
+  </div>
+</section>
+
+<section class="section alt" id="pasos">
+  <div class="wrap">
+    <h2>Cómo se usa</h2>
+    <ol class="steps">
+      <li><span class="n">1</span><h3>Entra con tu cuenta</h3><p>Pide tus credenciales al superusuario del sistema.</p></li>
+      <li><span class="n">2</span><h3>Registra o importa</h3><p>Llena el formulario o sube el archivo de Excel.</p></li>
+      <li><span class="n">3</span><h3>Mantén la lista al día</h3><p>Busca, filtra, edita o elimina estudiantes cuando lo necesites.</p></li>
+    </ol>
+  </div>
+</section>
+
+<section class="access" id="acceso">
+  <div class="wrap">
+    <h2>Entra al sistema</h2>
+    <p>Usa las credenciales que te entregó el administrador.</p>
+    {% if user.is_authenticated %}<a href="{% url 'registrar' %}" class="btn btn-white btn-lg">Ir al registro</a>{% else %}<a href="{% url 'login' %}" class="btn btn-white btn-lg">Iniciar sesión</a>{% endif %}
+  </div>
+</section>
+</main>
+
+<footer class="footer">
+  <div class="wrap foot">
+    <p>© <span id="year">2026</span> Registro Universitario. Todos los derechos reservados.</p>
+    <p>Sistema de registro de estudiantes.</p>
+  </div>
+</footer>
+
+<script>
+const year = document.getElementById("year");
+if (year) year.textContent = new Date().getFullYear();
+
+const header = document.getElementById("header");
+const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 10);
+window.addEventListener("scroll", onScroll, { passive: true });
+onScroll();
+
+const menuBtn = document.getElementById("menuBtn");
+const nav = document.getElementById("nav");
+function setMenu(open) {
+  nav.classList.toggle("open", open);
+  menuBtn.setAttribute("aria-expanded", String(open));
+  menuBtn.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+}
+menuBtn.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
+nav.querySelectorAll("a").forEach(a => a.addEventListener("click", () => setMenu(false)));
+document.addEventListener("keydown", e => { if (e.key === "Escape") setMenu(false); });
+
+const links = [...nav.querySelectorAll('a[href^="#"]')];
+const spy = new IntersectionObserver(entries => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return;
+    links.forEach(l => l.classList.toggle("active", l.getAttribute("href") === "#" + en.target.id));
+  });
+}, { rootMargin: "-45% 0px -50% 0px" });
+links.forEach(l => { const s = document.querySelector(l.getAttribute("href")); if (s) spy.observe(s); });
+</script>
+</body>
+</html>
