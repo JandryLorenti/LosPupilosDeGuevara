@@ -56,6 +56,12 @@ def editar(request, id):
         if Estudiante.objects.filter(correo=nuevo_correo).exclude(id=estudiante.id).exists():
             messages.error(request, 'Ese correo ya está registrado con otro estudiante.')
             return render(request, 'registro/editar.html', {'estudiante': estudiante})
+        if not nueva_edad.isdecimal() or not (16 <= int(nueva_edad) <= 100):
+            messages.error(request, 'La edad debe ser un número entre 16 y 100.')
+            return render(request, 'registro/editar.html', {'estudiante': estudiante})
+        if nueva_carrera not in dict(Estudiante.CARRERAS):
+            messages.error(request, 'Selecciona una carrera válida.')
+            return render(request, 'registro/editar.html', {'estudiante': estudiante})
 
         estudiante.correo = nuevo_correo
         estudiante.edad = int(nueva_edad)
