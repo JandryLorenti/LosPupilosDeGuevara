@@ -32,8 +32,8 @@ class EstudianteForm(forms.ModelForm):
 class ImportarExcelForm(forms.Form):
     archivo = forms.FileField(label='Archivo Excel (.xlsx)')
 
-def clean_archivo(self):
-    archivo = self.cleaned_data['archivo']
-    if not archivo.name.lower().endswith('.xlsx'):
-        raise forms.ValidationError('El archivo debe tener formato .xlsx')
-    return archivo
+    def clean_archivo(self):
+        archivo = self.cleaned_data['archivo']
+        if not archivo.name.lower().endswith('.xlsx'):
+            raise forms.ValidationError('El archivo debe tener formato .xlsx')
+        return archivo
