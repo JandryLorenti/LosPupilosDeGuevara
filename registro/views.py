@@ -100,6 +100,9 @@ def lista(request):
     if carrera:
         estudiantes = estudiantes.filter(carrera=carrera)
 
+    ORDENES_VALIDOS = ['-fecha_registro', 'fecha_registro', 'apellido', '-apellido']
+    if orden not in ORDENES_VALIDOS:
+        orden = '-fecha_registro'
     estudiantes = estudiantes.order_by(orden)
 
     return render(request, "registro/lista.html", {"estudiantes": estudiantes})
