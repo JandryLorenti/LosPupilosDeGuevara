@@ -14,6 +14,10 @@ from .models import Estudiante
 def es_admin(user):
     return user.is_superuser
 
+# Página de presentación pública
+def landing(request):
+    return render(request, 'registro/landing.html')
+
 @login_required
 def registrar(request):
     if request.method == 'POST':
