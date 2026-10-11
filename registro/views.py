@@ -110,7 +110,8 @@ def _lista_con_errores(request, errores):
         'errores_importacion': errores[:MAX_ERRORES_MOSTRADOS],
         'errores_extra': extra if extra > 0 else 0,
     })
-    
+
+@login_required
 def importar_excel(request):
     if request.method != 'POST':
         return redirect('registrar')
