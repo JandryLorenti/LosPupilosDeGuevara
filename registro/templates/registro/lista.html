@@ -141,6 +141,7 @@
     {% if user.is_authenticated %}
     <nav class="navbar">
         <div class="nav-links">
+            <a href="{% url 'landing' %}">Inicio</a>
             <a href="{% url 'registrar' %}"> Cargar Estudiante</a>
             <a href="{% url 'lista' %}" class="active"> Lista de Estudiantes</a>
         </div>

@@ -116,8 +116,9 @@
     {% if user.is_authenticated %}
     <nav class="navbar">
         <div class="nav-links">
-            <a href="{% url 'registrar' %}">📝 Cargar Estudiante</a>
-            <a href="{% url 'lista' %}">👥 Lista de Estudiantes</a>
+            <a href="{% url 'landing' %}">Inicio</a>
+            <a href="{% url 'registrar' %}"> Cargar Estudiante</a>
+            <a href="{% url 'lista' %}"> Lista de Estudiantes</a>
         </div>
         <div class="user-actions">
             <span class="user-greeting">Hola, {{ user.username }}</span>
