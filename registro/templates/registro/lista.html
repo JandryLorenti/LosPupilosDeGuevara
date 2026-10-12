@@ -15,6 +15,8 @@
     <style>
         /* Reset & Base */
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        
         
         body { 
             font-family: 'Inter', sans-serif; 
@@ -50,6 +52,20 @@
         .btn-admin:hover { background-color: #FAD4D8; }
         .btn-logout { background-color: #9B1B22; color: white; }
         .btn-logout:hover { background-color: #7A151A; }
+
+        .navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+.nav-links { flex-wrap: wrap; gap: 1rem; }
+.user-actions { flex-wrap: wrap; gap: 0.75rem; }
+
+@media (max-width: 600px) {
+    .navbar { justify-content: center; }
+    .nav-links a, .user-greeting { font-size: 0.8rem; }
+    .btn-nav { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
+}
 
         /* Contenedor Principal */
         .container { width: 100%; max-width: 1100px; }
