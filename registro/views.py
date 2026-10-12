@@ -87,8 +87,9 @@ def lista(request):
             messages.error(request, "No seleccionaste ningún estudiante para eliminar.")
         return redirect("lista")
 
-    # 2. OBTENER TODOS LOS ESTUDIANTES Y APLICAR FILTROS (Vía GET)
+    # 2. OBTENER TODOS LOS ESTUDIANTES Y CARRERAS (Vía GET)
     estudiantes = Estudiante.objects.all()
+    carreras_disponibles = Carrera.objects.all() # <- AQUÍ OBTENEMOS LAS CARRERAS
 
     buscar = request.GET.get("buscar", "")
     carrera = request.GET.get("carrera", "")
@@ -98,14 +99,19 @@ def lista(request):
         estudiantes = estudiantes.filter(nombre__icontains=buscar)
     
     if carrera:
-        estudiantes = estudiantes.filter(carrera=carrera)
+        # Se filtra por ID de carrera
+        estudiantes = estudiantes.filter(carrera_id=carrera)
 
     ORDENES_VALIDOS = ['-fecha_registro', 'fecha_registro', 'apellido', '-apellido']
     if orden not in ORDENES_VALIDOS:
         orden = '-fecha_registro'
     estudiantes = estudiantes.order_by(orden)
 
-    return render(request, "registro/lista.html", {"estudiantes": estudiantes})
+    # AQUÍ ENVIAMOS AMBAS COSAS AL HTML: estudiantes y carreras_disponibles
+    return render(request, "registro/lista.html", {
+        "estudiantes": estudiantes,
+        "carreras_disponibles": carreras_disponibles 
+    })
 
 
 COLUMNAS_EXCEL = ['cedula', 'nombre', 'apellido', 'correo', 'edad', 'carrera']
