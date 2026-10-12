@@ -47,6 +47,21 @@
             z-index: 1000;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
+
+.navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+.nav-links { flex-wrap: wrap; gap: 1rem; }
+.user-actions { flex-wrap: wrap; gap: 0.75rem; }
+
+@media (max-width: 600px) {
+    .navbar { justify-content: center; }
+    .nav-links a, .user-greeting { font-size: 0.8rem; }
+    .btn-nav { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
+}
+
         .nav-links { display: flex; gap: 1.5rem; align-items: center; }
         .nav-links a { text-decoration: none; color: #4A4642; font-weight: 600; font-size: 0.9rem; transition: color 0.15s ease; }
         .nav-links a:hover, .nav-links a.active { color: #9B1B22; }

@@ -9,18 +9,33 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        
         
         /* Ajuste de padding-top para la barra de navegación */
-        body { 
-            font-family: 'Inter', sans-serif; color: #1A1A18; min-height: 100vh; 
-            display: flex; align-items: center; justify-content: center; 
-            padding: 5.5rem 1rem 2rem 1rem; 
-            background-image: url("{% static 'img/djangoimg.jpg' %}"); 
-            background-repeat: no-repeat; background-size: cover; 
-            background-position: center; background-attachment: fixed; 
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #1A1A18;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6rem 1rem 2rem 1rem;
+            
         }
 
         /* --- BARRA DE NAVEGACIÓN (VIAJE RÁPIDO) --- */
+        .navbar {
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+
+        
+.nav-links { flex-wrap: wrap; }
+        .navbar form { display: flex; align-items: center; }
+
+
         .navbar {
             width: 100%; background-color: #FCFBF9; border-bottom: 1px solid #F2EAE4;
             padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center;
@@ -37,6 +52,21 @@
         .btn-nav { padding: 0.5rem 1rem; border-radius: 0.5rem; font-size: 0.8rem; font-weight: 600; text-decoration: none; cursor: pointer; border: none; transition: all 0.15s ease; }
         .btn-logout { background-color: #9B1B22; color: white; }
         .btn-logout:hover { background-color: #7A151A; }
+
+        .navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+.nav-links { flex-wrap: wrap; gap: 1rem; }
+.user-actions { flex-wrap: wrap; gap: 0.75rem; }
+
+@media (max-width: 600px) {
+    .navbar { justify-content: center; }
+    .nav-links a, .user-greeting { font-size: 0.8rem; }
+    .btn-nav { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
+}
+
         /* ------------------------------------------- */
 
         .container { width: 100%; max-width: 420px; }

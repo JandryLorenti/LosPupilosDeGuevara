@@ -12,6 +12,38 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
+        
+        * {
+            box-sizing: border-box;
+        }
+
+        .navbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+}
+.nav-links { flex-wrap: wrap; gap: 1rem; }
+.user-actions { flex-wrap: wrap; gap: 0.75rem; }
+
+@media (max-width: 600px) {
+    .navbar { justify-content: center; }
+    .nav-links a, .user-greeting { font-size: 0.8rem; }
+    .btn-nav { padding: 0.4rem 0.7rem; font-size: 0.75rem; }
+}
+        
+        
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 16px;
+        }
+        
+        .contenedor {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
         /* Reset & Base */
         * {
             box-sizing: border-box;
