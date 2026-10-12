@@ -8,7 +8,7 @@ from django.contrib.auth.forms import UserCreationForm
 import pandas as pd
 from django.db import transaction
 from .forms import EstudianteForm, ImportarExcelForm
-from .models import Estudiante
+from .models import Estudiante, Carrera
 
 # Regla de seguridad: Solo pasan los superusuarios
 def es_admin(user):
@@ -145,8 +145,8 @@ def importar_excel(request):
     if df.empty:
         return _lista_con_errores(request, ['El archivo no tiene registros.'])
 
-    por_codigo = {codigo.lower(): codigo for codigo, _ in Estudiante.CARRERAS}
-    por_nombre = {nombre.lower(): codigo for codigo, nombre in Estudiante.CARRERAS}
+    # --- LÍNEAS VIEJAS ELIMINADAS AQUÍ ---
+    
     errores = []
     formularios = []
     correos_vistos = {}
@@ -156,8 +156,16 @@ def importar_excel(request):
         n_fila = indice + 2
         datos = {c: str(fila[c]).strip() for c in COLUMNAS_EXCEL}
 
-        clave = datos['carrera'].lower()
-        datos['carrera'] = por_codigo.get(clave) or por_nombre.get(clave) or datos['carrera']
+        # --- MAGIA DE LA NORMALIZACIÓN ---
+        nombre_carrera_excel = datos['carrera'].strip()
+        if nombre_carrera_excel:
+            obj_carrera, creada = Carrera.objects.get_or_create(
+                nombre__iexact=nombre_carrera_excel,
+                defaults={'nombre': nombre_carrera_excel.capitalize()}
+            )
+            datos['carrera'] = obj_carrera.id
+        # ---------------------------------
+
         if datos['edad'].endswith('.0'):
             datos['edad'] = datos['edad'][:-2]
 
@@ -188,7 +196,7 @@ def importar_excel(request):
         for form in formularios:
             form.save()
 
-    messages.success(request, f'Se importaron {len(formularios)} estudiantes correctamente.')
+    messages.success(request, f'Se importaron {len(formularios)} estudiantes (las nuevas carreras se agregaron automáticamente).')
     return redirect('registrar')
 
 # Candado especial para crear cuentas (Solo Superusuarios)

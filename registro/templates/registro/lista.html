@@ -207,10 +207,12 @@
                     
                     <select name="carrera" class="select-dropdown">
                         <option value="">Todas las carreras</option>
-                        <option value="SOF" {% if request.GET.carrera == 'SOF' %}selected{% endif %}>Software</option>
-                        <option value="ADM" {% if request.GET.carrera == 'ADM' %}selected{% endif %}>Administración</option>
-                        <option value="DER" {% if request.GET.carrera == 'DER' %}selected{% endif %}>Derecho</option>
-                        <option value="OTR" {% if request.GET.carrera == 'OTR' %}selected{% endif %}>Otra</option>
+                        {% for c in carreras_disponibles %}
+                            <!-- Aquí se llenará automáticamente con las carreras del CRUD -->
+                            <option value="{{ c.id }}" {% if request.GET.carrera == c.id|stringformat:"s" %}selected{% endif %}>
+                                {{ c.nombre }}
+                            </option>
+                        {% endfor %}
                     </select>
 
                     <select name="orden" class="select-dropdown">
@@ -249,7 +251,7 @@
                             <td>{{ e.nombre }} {{ e.apellido }}</td>
                             <td>{{ e.correo }}</td>
                             <td>{{ e.edad }}</td>
-                            <td>{{ e.get_carrera_display }}</td>
+                            <td>{{ e.carrera.nombre|default:"-" }}</td>
                             <td>{{ e.fecha_registro|date:"d/m/Y H:i" }}</td>
                             <td>
                                 <div class="action-buttons">
